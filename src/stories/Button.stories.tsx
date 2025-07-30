@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "../components/Button";
+import { Button } from "@xala-technologies/ui-system";
 import { PlusIcon, TrashIcon, CheckIcon } from "lucide-react";
 
 /**
@@ -22,12 +22,12 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "secondary", "destructive", "success", "warning", "info", "outline", "ghost", "link"],
+      options: ["primary", "secondary", "destructive", "outline", "ghost"],
       description: "The semantic variant of the button",
     },
     size: {
       control: "select",
-      options: ["sm", "md", "lg", "xl", "icon"],
+      options: ["sm", "md", "lg"],
       description: "The size of the button (all WCAG compliant)",
     },
     fullWidth: {
@@ -77,20 +77,19 @@ export const Destructive: Story = {
   },
 };
 
-export const Success: Story = {
+export const Outline: Story = {
   args: {
     children: "Save Changes",
-    variant: "success",
+    variant: "outline",
     size: "md",
   },
 };
 
-export const WithIcons: Story = {
+export const Ghost: Story = {
   args: {
-    children: "Add Item",
-    variant: "primary",
+    children: "Ghost Button",
+    variant: "ghost",
     size: "md",
-    startIcon: <PlusIcon size={16} />,
   },
 };
 
@@ -105,18 +104,15 @@ export const Loading: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex items-center gap-component flex-wrap">
+    <div className="flex items-center gap-4 flex-wrap">
       <Button variant="primary" size="sm">
-        Small (44px)
+        Small
       </Button>
       <Button variant="primary" size="md">
-        Medium (48px)
+        Medium
       </Button>
       <Button variant="primary" size="lg">
-        Large (56px)
-      </Button>
-      <Button variant="primary" size="xl">
-        Extra Large (64px)
+        Large
       </Button>
     </div>
   ),
@@ -124,16 +120,12 @@ export const Sizes: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="grid grid-cols-3 gap-component">
+    <div className="grid grid-cols-3 gap-4">
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
       <Button variant="destructive">Destructive</Button>
-      <Button variant="success">Success</Button>
-      <Button variant="warning">Warning</Button>
-      <Button variant="info">Info</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
-      <Button variant="link">Link</Button>
     </div>
   ),
 };

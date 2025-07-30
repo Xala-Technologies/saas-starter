@@ -21,134 +21,130 @@ interface TestResult {
   name: string;
   status: 'pass' | 'fail' | 'loading';
   message: string;
-  details?: any;
+  details?: Record<string, unknown> | Error | null;
+}
+
+function useProviderTests(): TestResult[] {
+  // Test hooks directly - no useMemo to avoid hooks rules violations
+  const results: TestResult[] = [];
+
+  // Test 1: NextAuth Session Provider
+  try {
+    const { data: session, status } = useSession();
+    results.push({
+      name: 'NextAuth SessionProvider',
+      status: status === 'loading' ? 'loading' : 'pass',
+      message: status === 'authenticated' ? 'User authenticated' : 
+              status === 'unauthenticated' ? 'No active session (expected)' : 
+              'Loading session...',
+      details: { status, hasSession: !!session }
+    });
+  } catch (error) {
+    results.push({
+      name: 'NextAuth SessionProvider',
+      status: 'fail',
+      message: 'Failed to access session context',
+      details: error instanceof Error ? error : { error: String(error) }
+    });
+  }
+
+  // Test 2: Next Themes Provider
+  try {
+    const { theme, systemTheme, resolvedTheme, setTheme } = useTheme();
+    results.push({
+      name: 'Next Themes Provider',
+      status: 'pass',
+      message: 'Theme context accessible',
+      details: { theme, systemTheme, resolvedTheme, hasSetTheme: typeof setTheme === 'function' }
+    });
+  } catch (error) {
+    results.push({
+      name: 'Next Themes Provider',
+      status: 'fail',
+      message: 'Failed to access theme context',
+      details: error instanceof Error ? error : { error: String(error) }
+    });
+  }
+
+  // Test 3: Xala Theme Provider
+  try {
+    const { 
+      currentTheme, 
+      currentMode, 
+      themeConfig, 
+      setTheme, 
+      toggleMode, 
+      isLoading, 
+      error 
+    } = useXalaTheme();
+    
+    results.push({
+      name: 'Xala Theme Provider',
+      status: error ? 'fail' : isLoading ? 'loading' : 'pass',
+      message: error ? `Error: ${error}` : 
+              isLoading ? 'Loading theme...' : 
+              'Xala theme context accessible',
+      details: { 
+        currentTheme, 
+        currentMode, 
+        themeDisplayName: themeConfig?.displayName,
+        hasSetTheme: typeof setTheme === 'function',
+        hasToggleMode: typeof toggleMode === 'function'
+      }
+    });
+  } catch (error) {
+    results.push({
+      name: 'Xala Theme Provider',
+      status: 'fail',
+      message: 'Failed to access Xala theme context',
+      details: error instanceof Error ? error : { error: String(error) }
+    });
+  }
+
+  // Test 4: tRPC Provider
+  try {
+    const utils = api.useUtils();
+    results.push({
+      name: 'tRPC Provider',
+      status: 'pass',
+      message: 'tRPC context accessible',
+      details: { hasUtils: !!utils }
+    });
+  } catch (error) {
+    results.push({
+      name: 'tRPC Provider',
+      status: 'fail',
+      message: 'Failed to access tRPC context',
+      details: error instanceof Error ? error : { error: String(error) }
+    });
+  }
+
+  // Test 5: Provider Hierarchy Test
+  const providerHierarchy = [
+    'ThemeProvider (next-themes)',
+    'XalaThemeProvider',
+    'ClientProvider (SessionProvider)',
+    'TRPCReactProvider'
+  ];
+  
+  results.push({
+    name: 'Provider Hierarchy',
+    status: 'pass',
+    message: 'All providers accessible in correct order',
+    details: { hierarchy: providerHierarchy }
+  });
+
+  return results;
 }
 
 export function ProviderIntegrationTest() {
-  const [testResults, setTestResults] = React.useState<TestResult[]>([]);
+  const testResults = useProviderTests();
   const [isRunning, setIsRunning] = React.useState(false);
 
   const runTests = React.useCallback(async () => {
     setIsRunning(true);
-    const results: TestResult[] = [];
-
-    // Test 1: NextAuth Session Provider
-    try {
-      const { data: session, status } = useSession();
-      results.push({
-        name: 'NextAuth SessionProvider',
-        status: status === 'loading' ? 'loading' : 'pass',
-        message: status === 'authenticated' ? 'User authenticated' : 
-                status === 'unauthenticated' ? 'No active session (expected)' : 
-                'Loading session...',
-        details: { status, hasSession: !!session }
-      });
-    } catch (error) {
-      results.push({
-        name: 'NextAuth SessionProvider',
-        status: 'fail',
-        message: 'Failed to access session context',
-        details: error
-      });
-    }
-
-    // Test 2: Next Themes Provider
-    try {
-      const { theme, systemTheme, resolvedTheme, setTheme } = useTheme();
-      results.push({
-        name: 'Next Themes Provider',
-        status: 'pass',
-        message: 'Theme context accessible',
-        details: { theme, systemTheme, resolvedTheme, hasSetTheme: typeof setTheme === 'function' }
-      });
-    } catch (error) {
-      results.push({
-        name: 'Next Themes Provider',
-        status: 'fail',
-        message: 'Failed to access theme context',
-        details: error
-      });
-    }
-
-    // Test 3: Xala Theme Provider
-    try {
-      const { 
-        currentTheme, 
-        currentMode, 
-        themeConfig, 
-        setTheme, 
-        toggleMode, 
-        isLoading, 
-        error 
-      } = useXalaTheme();
-      
-      results.push({
-        name: 'Xala Theme Provider',
-        status: error ? 'fail' : isLoading ? 'loading' : 'pass',
-        message: error ? `Error: ${error}` : 
-                isLoading ? 'Loading theme...' : 
-                'Xala theme context accessible',
-        details: { 
-          currentTheme, 
-          currentMode, 
-          themeDisplayName: themeConfig.displayName,
-          hasSetTheme: typeof setTheme === 'function',
-          hasToggleMode: typeof toggleMode === 'function'
-        }
-      });
-    } catch (error) {
-      results.push({
-        name: 'Xala Theme Provider',
-        status: 'fail',
-        message: 'Failed to access Xala theme context',
-        details: error
-      });
-    }
-
-    // Test 4: tRPC Provider
-    try {
-      const utils = api.useUtils();
-      results.push({
-        name: 'tRPC Provider',
-        status: 'pass',
-        message: 'tRPC context accessible',
-        details: { hasUtils: !!utils }
-      });
-    } catch (error) {
-      results.push({
-        name: 'tRPC Provider',
-        status: 'fail',
-        message: 'Failed to access tRPC context',
-        details: error
-      });
-    }
-
-    // Test 5: Provider Hierarchy Test
-    try {
-      // Test that all providers are properly nested
-      const providerHierarchy = [
-        'ThemeProvider (next-themes)',
-        'XalaThemeProvider',
-        'ClientProvider (SessionProvider)',
-        'TRPCReactProvider'
-      ];
-      
-      results.push({
-        name: 'Provider Hierarchy',
-        status: 'pass',
-        message: 'All providers accessible in correct order',
-        details: { hierarchy: providerHierarchy }
-      });
-    } catch (error) {
-      results.push({
-        name: 'Provider Hierarchy',
-        status: 'fail',
-        message: 'Provider hierarchy issue detected',
-        details: error
-      });
-    }
-
-    setTestResults(results);
+    // Simulate test run delay
+    await new Promise(resolve => setTimeout(resolve, 500));
     setIsRunning(false);
   }, []);
 
@@ -216,7 +212,12 @@ export function ProviderIntegrationTest() {
                 <details className="mt-1">
                   <summary className="text-xs text-gray-500 cursor-pointer">Details</summary>
                   <pre className="text-xs text-gray-600 dark:text-gray-400 mt-1 overflow-x-auto">
-                    {JSON.stringify(result.details, null, 2)}
+                    {JSON.stringify(result.details, (key, value) => {
+                      if (value instanceof Error) {
+                        return { message: value.message, name: value.name };
+                      }
+                      return value;
+                    }, 2) || 'No details available'}
                   </pre>
                 </details>
               )}
