@@ -2,10 +2,13 @@ import type { Config } from "tailwindcss";
 
 /**
  * Enhanced Design Token System with WCAG 2.2 AAA Compliance
+ * Integrated with Xala UI System Enterprise Theme
+ * 
  * - Enhanced 8pt Grid System (8px increments)
  * - Semantic design tokens for consistent UI
  * - Professional sizing standards
  * - WCAG AAA compliant colors and spacing
+ * - Xala UI System token integration
  */
 export default {
   darkMode: ["class"],
