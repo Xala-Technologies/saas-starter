@@ -109,20 +109,20 @@
 ## 🗑️ Internal Design System Cleanup
 
 ### Remove Internal Design Tokens
-- [ ] **Delete**: `src/lib/design-tokens.ts` - Use Xala tokens exclusively
-- [ ] **Delete**: `src/styles/design-tokens.css` - Use Xala CSS variables
-- [ ] **Remove**: All internal color, spacing, typography token definitions
-- [ ] **Update**: All references to internal tokens to use Xala tokens
-- [ ] **Verify**: No internal token imports remain in codebase
+- [x] **Delete**: `src/lib/design-tokens.ts` - Use Xala tokens exclusively
+- [x] **Delete**: `src/styles/design-tokens.css` - Use Xala CSS variables (file didn't exist)
+- [x] **Remove**: All internal color, spacing, typography token definitions
+- [x] **Update**: All references to internal tokens to use Xala tokens
+- [x] **Verify**: No internal token imports remain in codebase
 
 ### Remove Internal Components
 - [x] **Delete**: `src/components/XalaButton.tsx` - COMPLETED
-- [ ] **Delete**: `src/components/Button.tsx` - Use Xala Button
-- [ ] **Delete**: `src/components/Input.tsx` - Use Xala Input
-- [ ] **Delete**: `src/components/Card.tsx` - Use Xala Card
-- [ ] **Delete**: `src/components/Modal.tsx` - Use Xala Modal
-- [ ] **Delete**: All custom UI component files in `src/components/ui/`
-- [ ] **Update**: All imports to use Xala components directly
+- [x] **Delete**: `src/components/Button.tsx` - Use Xala Button (file didn't exist)
+- [x] **Delete**: `src/components/Input.tsx` - Use Xala Input (file didn't exist)
+- [x] **Delete**: `src/components/Card.tsx` - Use Xala Card (file didn't exist)
+- [x] **Delete**: `src/components/Modal.tsx` - Use Xala Modal (file didn't exist)
+- [x] **Delete**: All custom UI component files in `src/components/ui/` (removed button.tsx)
+- [x] **Update**: All imports to use Xala components directly
 
 ### Remove Internal Layouts
 - [ ] **Delete**: Custom layout components in `src/components/layouts/`
@@ -134,9 +134,9 @@
 ### Remove Custom Themes
 - [x] **Delete**: `public/templates/` directory - COMPLETED
 - [x] **Delete**: `src/app/api/templates/` directory - COMPLETED
-- [ ] **Delete**: Custom theme configuration files
-- [ ] **Delete**: Custom CSS theme variables
-- [ ] **Update**: All theme references to use Xala themes exclusively
+- [x] **Delete**: Custom theme configuration files (removed theme-config.ts)
+- [x] **Delete**: Custom CSS theme variables (removed xala-token-bridge.ts)
+- [x] **Update**: All theme references to use Xala themes exclusively (updated XalaThemeProvider)
 
 ### Navigation Components
 - [ ] Implement primary navigation using Xala navigation

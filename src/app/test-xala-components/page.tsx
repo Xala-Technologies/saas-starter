@@ -10,9 +10,11 @@
 import React, { useState } from 'react';
 import { Button } from '@xala-technologies/ui-system';
 import { useXalaTheme } from '@/components/providers/XalaThemeProvider';
+import { useTheme } from 'next-themes';
 
 export default function TestXalaComponentsPage(): React.JSX.Element {
-  const { currentTheme, currentMode, toggleMode } = useXalaTheme();
+  const { currentTheme } = useXalaTheme();
+  const { theme, setTheme: setNextTheme } = useTheme();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -47,14 +49,14 @@ export default function TestXalaComponentsPage(): React.JSX.Element {
                 Theme: <strong>{currentTheme}</strong>
               </span>
               <span className="text-sm">
-                Mode: <strong>{currentMode}</strong>
+                Mode: <strong>{theme === 'dark' ? 'dark' : 'light'}</strong>
               </span>
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={toggleMode}
+                onClick={() => setNextTheme(theme === 'dark' ? 'light' : 'dark')}
               >
-                Toggle {currentMode === 'light' ? 'Dark' : 'Light'}
+                Toggle {theme === 'dark' ? 'Light' : 'Dark'}
               </Button>
             </div>
           </div>

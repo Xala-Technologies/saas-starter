@@ -10,9 +10,11 @@
 import React from 'react';
 import { Button, Card, CardHeader, CardContent, Input, Stack } from '@xala-technologies/ui-system';
 import { useXalaTheme } from '@/components/providers/XalaThemeProvider';
+import { useTheme } from 'next-themes';
 
 export default function TestXalaButtonPage() {
-  const { currentTheme, currentMode, toggleMode } = useXalaTheme();
+  const { currentTheme } = useXalaTheme();
+  const { theme, setTheme: setNextTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
@@ -25,9 +27,9 @@ export default function TestXalaButtonPage() {
           </p>
           <div className="flex items-center justify-center gap-4 text-sm">
             <span>Theme: <strong>{currentTheme}</strong></span>
-            <span>Mode: <strong>{currentMode}</strong></span>
-            <Button variant="outline" size="sm" onClick={toggleMode}>
-              Toggle {currentMode === 'light' ? 'Dark' : 'Light'}
+            <span>Mode: <strong>{theme === 'dark' ? 'dark' : 'light'}</strong></span>
+            <Button variant="outline" size="sm" onClick={() => setNextTheme(theme === 'dark' ? 'light' : 'dark')}>
+              Toggle {theme === 'dark' ? 'Light' : 'Dark'}
             </Button>
           </div>
         </div>
@@ -128,12 +130,12 @@ export default function TestXalaButtonPage() {
               </div>
             </div>
             <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Mode: {currentMode}</h3>
+              <h3 className="font-medium mb-2">Mode: {theme === 'dark' ? 'dark' : 'light'}</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Toggle between light and dark modes to see the adaptation.
               </p>
-              <Button onClick={toggleMode} variant="outline">
-                Switch to {currentMode === 'light' ? 'Dark' : 'Light'} Mode
+              <Button onClick={() => setNextTheme(theme === 'dark' ? 'light' : 'dark')} variant="outline">
+                Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode
               </Button>
             </div>
           </div>

@@ -70,26 +70,20 @@ function useProviderTests(): TestResult[] {
   try {
     const { 
       currentTheme, 
-      currentMode, 
-      themeConfig, 
+      themeMetadata, 
       setTheme, 
-      toggleMode, 
-      isLoading, 
-      error 
+      isLoading
     } = useXalaTheme();
     
     results.push({
       name: 'Xala Theme Provider',
-      status: error ? 'fail' : isLoading ? 'loading' : 'pass',
-      message: error ? `Error: ${error}` : 
-              isLoading ? 'Loading theme...' : 
+      status: isLoading ? 'loading' : 'pass',
+      message: isLoading ? 'Loading theme...' : 
               'Xala theme context accessible',
       details: { 
         currentTheme, 
-        currentMode, 
-        themeDisplayName: themeConfig?.displayName,
-        hasSetTheme: typeof setTheme === 'function',
-        hasToggleMode: typeof toggleMode === 'function'
+        themeDisplayName: themeMetadata?.displayName,
+        hasSetTheme: typeof setTheme === 'function'
       }
     });
   } catch (error) {
@@ -241,9 +235,9 @@ export function ProviderIntegrationTest() {
 export function ProviderStatus() {
   const { data: session } = useSession();
   const { theme } = useTheme();
-  const { currentTheme, currentMode, error } = useXalaTheme();
+  const { currentTheme } = useXalaTheme();
 
-  const allGood = !error && currentTheme && currentMode && theme;
+  const allGood = currentTheme && theme;
 
   return (
     <div className="fixed top-4 right-4 z-50">

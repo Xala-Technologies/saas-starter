@@ -18,7 +18,7 @@ interface ProviderDebugProps {
 
 export function ProviderDebug({ showDetails = false }: ProviderDebugProps) {
   const { theme: nextTheme, systemTheme, resolvedTheme } = useTheme();
-  const { currentTheme, currentMode, themeConfig, isLoading } = useXalaTheme();
+  const { currentTheme, themeMetadata, isLoading } = useXalaTheme();
 
   if (!showDetails) {
     return (
@@ -58,9 +58,9 @@ export function ProviderDebug({ showDetails = false }: ProviderDebugProps) {
           ) : (
             <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
               <div>Theme: {currentTheme}</div>
-              <div>Mode: {currentMode}</div>
-              <div>Display: {themeConfig.displayName}</div>
-              <div>Category: {themeConfig.category}</div>
+              <div>Mode: {nextTheme === 'dark' ? 'dark' : 'light'}</div>
+              <div>Display: {themeMetadata.displayName}</div>
+              <div>Category: {themeMetadata.category}</div>
             </div>
           )}
         </div>
