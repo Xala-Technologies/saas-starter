@@ -71,20 +71,20 @@ This template includes [Next.js 14](https://nextjs.org/) with the App Router, [S
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Copy `.env.example` to `.env` and configure your environment variables
 4. Set up your database:
 
 ```bash
-npx prisma migrate dev
+pnpm prisma migrate dev
 ```
 
 5. Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to see your app.
@@ -129,8 +129,8 @@ This template is optimized for deployment on [Vercel](https://vercel.com).
 1. Run database migrations in the Vercel deployment:
 
 ```bash
-npx vercel env pull .env.production.local  # Pull production env vars
-npx prisma migrate deploy                  # Deploy migrations to production
+pnpx vercel env pull .env.production.local  # Pull production env vars
+pnpm prisma migrate deploy                  # Deploy migrations to production
 ```
 
 2. Set up your custom domain in Vercel (optional):
