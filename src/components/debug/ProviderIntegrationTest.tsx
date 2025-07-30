@@ -236,6 +236,27 @@ export function ProviderStatus() {
   const { data: session } = useSession();
   const { theme } = useTheme();
   const { currentTheme } = useXalaTheme();
+  
+  // Use mounted state to avoid hydration mismatch
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Always show consistent initial state during SSR/hydration
+  if (!mounted) {
+    return (
+      <div className="fixed top-4 right-4 z-50">
+        <div className="px-3 py-2 rounded-lg border text-sm bg-gray-100 border-gray-300 text-gray-600">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+            <span>Providers: Loading</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const allGood = currentTheme && theme;
 
