@@ -8,3 +8,4 @@
 - Captured screenshot of Button component stories in Storybook
 - Removed all internal design system files (design-tokens.ts, xala-token-bridge.ts, theme-config.ts, ui/button.tsx) to use Xala UI System directly
 - Fixed hydration mismatch in ProviderStatus component by implementing mounted state pattern
+- Added .cursorrules content to CLAUDE.md and completed Remove Internal Layouts story (no layouts to remove)
