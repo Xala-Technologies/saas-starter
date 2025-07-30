@@ -17,6 +17,7 @@ import {
   PRIMARY_THEME,
   DEFAULT_THEME_MODE,
   THEME_PROVIDER_CONFIG,
+  AVAILABLE_THEMES,
   getThemeConfig
 } from '@/lib/theme-config';
 
@@ -27,6 +28,8 @@ interface XalaThemeContextType {
   setTheme: (theme: ThemeName) => void;
   toggleMode: () => void;
   isLoading: boolean;
+  error: string | null;
+  retry: () => void;
 }
 
 const XalaThemeContext = createContext<XalaThemeContextType | undefined>(undefined);
@@ -45,6 +48,7 @@ export function XalaThemeProvider({
   const { theme: nextTheme, setTheme: setNextTheme, systemTheme } = useTheme();
   const [currentTheme, setCurrentTheme] = useState<ThemeName>(defaultTheme);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Determine current mode from next-themes
   const currentMode: ThemeMode = React.useMemo(() => {
@@ -60,21 +64,39 @@ export function XalaThemeProvider({
     [currentTheme, currentMode]
   );
 
-  // Load persisted theme preference
+  // Load persisted theme preference on mount only
   useEffect(() => {
-    if (typeof window !== 'undefined' && THEME_PROVIDER_CONFIG.persistThemePreference) {
-      const savedTheme = localStorage.getItem(THEME_PROVIDER_CONFIG.storageKey);
-      if (savedTheme && savedTheme !== currentTheme) {
-        setCurrentTheme(savedTheme as ThemeName);
+    try {
+      if (typeof window !== 'undefined' && THEME_PROVIDER_CONFIG.persistThemePreference) {
+        const savedTheme = localStorage.getItem(THEME_PROVIDER_CONFIG.storageKey);
+        if (savedTheme && savedTheme !== defaultTheme) {
+          // Validate theme before setting
+          if (Object.keys(AVAILABLE_THEMES).includes(savedTheme)) {
+            setCurrentTheme(savedTheme as ThemeName);
+          } else {
+            console.warn(`Invalid saved theme: ${savedTheme}, falling back to default`);
+            localStorage.removeItem(THEME_PROVIDER_CONFIG.storageKey);
+          }
+        }
       }
+      setError(null);
+    } catch (err) {
+      console.error('Failed to load theme preference:', err);
+      setError('Failed to load theme preference');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  }, [currentTheme]);
+  }, []); // Empty dependency array - only run on mount
 
   // Persist theme changes
   useEffect(() => {
-    if (typeof window !== 'undefined' && THEME_PROVIDER_CONFIG.persistThemePreference) {
-      localStorage.setItem(THEME_PROVIDER_CONFIG.storageKey, currentTheme);
+    try {
+      if (typeof window !== 'undefined' && THEME_PROVIDER_CONFIG.persistThemePreference) {
+        localStorage.setItem(THEME_PROVIDER_CONFIG.storageKey, currentTheme);
+      }
+    } catch (err) {
+      console.error('Failed to persist theme preference:', err);
+      // Don't set error state for persistence failures as it's not critical
     }
   }, [currentTheme]);
 
@@ -89,20 +111,59 @@ export function XalaThemeProvider({
     setNextTheme(newMode);
   }, [currentMode, setNextTheme]);
 
+  const retry = React.useCallback(() => {
+    setError(null);
+    setIsLoading(true);
+    // Retry theme initialization
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 100);
+  }, []);
+
   const contextValue: XalaThemeContextType = {
     currentTheme,
     currentMode,
     themeConfig,
     setTheme,
     toggleMode,
-    isLoading
+    isLoading,
+    error,
+    retry
   };
+
+  // Show error state if theme loading failed
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center p-8">
+          <div className="text-red-500 mb-4">
+            <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            Theme Loading Error
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
+          <button
+            onClick={retry}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Show loading state during hydration
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading theme...</p>
+        </div>
       </div>
     );
   }

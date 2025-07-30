@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import ClientProvider from "@/components/ClientProvider";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ThemeAwareToast } from "@/components/theme/ThemeAwareToast";
+import { XalaThemeProvider } from "@/components/providers/XalaThemeProvider";
 
 export const metadata: Metadata = {
   title: "",
@@ -24,12 +25,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider defaultTheme="system" enableSystem>
-          <ClientProvider>
-            <TRPCReactProvider>
-              {children}
-              <ThemeAwareToast />
-            </TRPCReactProvider>
-          </ClientProvider>
+          <XalaThemeProvider defaultTheme="enterprise" enableThemeSwitching={true}>
+            <ClientProvider>
+              <TRPCReactProvider>
+                {children}
+                <ThemeAwareToast />
+              </TRPCReactProvider>
+            </ClientProvider>
+          </XalaThemeProvider>
         </ThemeProvider>
       </body>
     </html>

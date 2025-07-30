@@ -1,8 +1,13 @@
 "use client";
 
-import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 
+/**
+ * Client Provider
+ * 
+ * Provides client-side contexts that need to be available throughout the app.
+ * Note: ThemeProvider is now handled in the root layout with XalaThemeProvider integration.
+ */
 export default function ClientProvider({
   children,
 }: {
@@ -10,14 +15,7 @@ export default function ClientProvider({
 }) {
   return (
     <SessionProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        {children}
-      </ThemeProvider>
+      {children}
     </SessionProvider>
   );
 }

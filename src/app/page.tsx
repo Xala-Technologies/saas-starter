@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { ProviderDebug, ProviderStatusIndicator } from "@/components/debug/ProviderDebug";
+import { ProviderIntegrationTest, ProviderStatus } from "@/components/debug/ProviderIntegrationTest";
 
 export const dynamic = "force-dynamic";
 
@@ -81,6 +83,11 @@ export default async function Page() {
           </div>
         </div>
       </footer>
+      
+      {/* Provider Debug Components - Remove in production */}
+      <ProviderStatus />
+      <ProviderIntegrationTest />
+      <ProviderDebug showDetails={false} />
     </div>
   );
 }
